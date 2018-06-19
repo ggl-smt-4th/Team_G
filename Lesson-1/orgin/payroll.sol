@@ -46,4 +46,12 @@ contract Payroll {
         lastPayday = nextPayday;
         employee.transfer(salary);
     }
+    
+    function changeAddress(address e){
+        employee = e;
+    }
+    
+    function changeSalary(uint s){
+        salary = s;
+    }
 }
