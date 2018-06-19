@@ -49,9 +49,13 @@ contract Payroll {
     
     function changeAddress(address e){
         employee = e;
+        lastPayday = now;
+
     }
     
     function changeSalary(uint s){
-        salary = s;
+        salary = s;        
+        lastPayday = now;
+
     }
 }
