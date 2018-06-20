@@ -1,30 +1,31 @@
-/*作业请提交在这个目录下*/
+
 pragma solidity ^0.4.14;
 
 contract Payroll {
-    uint constant payDuration = 10 seconds;
-
-    address owner;
     uint salary;
+    address owner;
     address employee;
-    uint lastPayday;
-
-    function Payroll() {
-        owner = msg.sender;
-    }
+    uint constant payDuration = 30 days;
+    uint lastPayday = now;
     
-    function updateEmployeeAddress(address e) {
-        require(msg.sender == owner);
+    function setEmployee(address _add) {
+        if(owner != msg.sender) {
+            return revert();
+        }
         
-        employee = e;
-        lastPayday = now;
-    }
-
-    function updateEmployeeSalary(uint s) {
-        require(msg.sender == owner);
+        owner = _add;
+    } 
+    
+    function setSalary(uint _sal) {
+        if(owner != msg.sender) {
+            return revert();
+        }
         
-        salary = s * 1 ether;
-        lastPayday = now;
+        if(salary == 0) {
+            revert();
+        }
+        
+        salary = _sal * 1 ether;
     }
     
     function addFund() payable returns (uint) {
@@ -39,13 +40,21 @@ contract Payroll {
         return calculateRunway() > 0;
     }
     
-    function getPaid() {
-        require(msg.sender == employee);
+    function getpaid()  {
+        if(msg.sender != employee) {
+            revert();
+        }
+        
+        if( ! hasEnoughFund() ) {
+            revert();
+        }
         
         uint nextPayday = lastPayday + payDuration;
-        assert(nextPayday < now);
-
+        if (nextPayday > now) {
+            revert();
+        } 
         lastPayday = nextPayday;
         employee.transfer(salary);
     }
+    
 }
