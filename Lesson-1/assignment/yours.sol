@@ -1,51 +1,57 @@
 /*作业请提交在这个目录下*/
 pragma solidity ^0.4.14;
 
-contract Payroll {
-    uint constant payDuration = 10 seconds;
-
-    address owner;
-    uint salary;
+contract MyPayroll {
+    uint salary = 1 ether;
     address employee;
-    uint lastPayday;
+    address employer;
+    uint constant payDuration = 10 seconds;
+    uint lastPaydata = now;
 
-    function Payroll() {
-        owner = msg.sender;
-    }
-    
-    function updateEmployeeAddress(address e) {
-        require(msg.sender == owner);
-        
-        employee = e;
-        lastPayday = now;
+    function MyPayroll() {
+        employer = msg.sender;
     }
 
-    function updateEmployeeSalary(uint s) {
-        require(msg.sender == owner);
-        
-        salary = s * 1 ether;
-        lastPayday = now;
-    }
-    
     function addFund() payable returns (uint) {
         return this.balance;
     }
-    
-    function calculateRunway() returns (uint) {
+
+    function calcutateRunway() returns (uint) {
         return this.balance / salary;
     }
-    
-    function hasEnoughFund() returns (bool) {
-        return calculateRunway() > 0;
-    }
-    
-    function getPaid() {
-        require(msg.sender == employee);
-        
-        uint nextPayday = lastPayday + payDuration;
-        assert(nextPayday < now);
 
-        lastPayday = nextPayday;
+    function hasEnougFund() returns (bool) {
+        return calcutateRunway() > 0;
+    }
+
+    function updateEmployee(address e) {
+        if (msg.sender != employer) {
+            revert();
+        }
+
+        employee = e;
+        lastPaydata = now;
+    }
+
+    function updateSalary(uint s) {
+        if (msg.sender != employer) {
+            revert();
+        }
+
+        salary = s;
+        lastPaydata = now;
+    }
+
+    function getPaid() {
+        if (msg.sender != employee) {
+            revert();
+        }
+        uint nextPaydata = lastPaydata + payDuration;
+        if (nextPaydata > now) {
+            revert();
+        }
+
+        lastPaydata = nextPaydata;
         employee.transfer(salary);
     }
 }
