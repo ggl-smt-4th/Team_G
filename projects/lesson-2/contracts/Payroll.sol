@@ -18,11 +18,6 @@ contract Payroll {
         owner = msg.sender;
     }
 
-    function addEmployee(address employeeAddress, uint salary) public {
-        require(msg.sender == owner);
-        employees.push(Employee(employeeAddress, salary * 1 ether, now));
-    }
-
     function _findEmployee(address employeeId) private view returns (uint, bool) {
         for (uint i = 0; i < employees.length; i++) {
             if (employeeId == employees[i].addr) {
@@ -32,6 +27,13 @@ contract Payroll {
         return (0, false);
     }
     
+    function addEmployee(address employeeAddress, uint salary) public {
+        require(msg.sender == owner);
+        var (_, found) = _findEmployee(employeeAddress);
+        assert(!found);
+        employees.push(Employee(employeeAddress, salary * 1 ether, now));
+    }
+
     function _payRemaining(Employee e) private {
         e.addr.transfer(e.salary * (now - e.lastPayDay) / payDuration);
     }
