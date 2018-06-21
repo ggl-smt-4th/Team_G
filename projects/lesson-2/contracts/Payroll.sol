@@ -9,6 +9,7 @@ contract Payroll {
     }
 
     uint constant payDuration = 30 days;
+    uint256 constant UINT256_MAX = ~uint256(0);
 
     address owner;
     Employee[] employees;
@@ -17,9 +18,9 @@ contract Payroll {
         owner = msg.sender;
     }
 
-    function addEmployee(address employeeAddress, uint s) public {
+    function addEmployee(address employeeAddress, uint salary) public {
         require(msg.sender == owner);
-        employees.push(Employee(employeeAddress, s, now));
+        employees.push(Employee(employeeAddress, salary * 1 ether, now));
     }
 
     function _findEmployee(address employeeId) private view returns (uint, bool) {
@@ -40,7 +41,7 @@ contract Payroll {
         var (idx, found) = _findEmployee(employeeId);
         assert(found);
         uint lastIdx = employees.length - 1;
-        Employee toRemoveEmployee = employees[idx];
+        Employee storage toRemoveEmployee = employees[idx];
         employees[idx] = employees[lastIdx];
         employees.length -= 1;
         _payRemaining(toRemoveEmployee);
@@ -51,7 +52,7 @@ contract Payroll {
         require(msg.sender == owner);
         var (idx, found) = _findEmployee(employeeAddress);
         assert(found);
-        employees[idx].salary = salary;
+        employees[idx].salary = salary * 1 ether;
     }
 
     function addFund() payable public returns (uint) {
@@ -63,6 +64,9 @@ contract Payroll {
         for (uint i = 0; i < employees.length; i++) {
             sum += employees[i].salary;
         }
+        if (sum == 0) {
+            return UINT256_MAX;
+        }
         return address(this).balance / sum;
     }
 
@@ -73,7 +77,7 @@ contract Payroll {
     function getPaid() public {
         var (idx, found) = _findEmployee(msg.sender);
         assert(found);
-        Employee e = employees[idx];
+        Employee storage e = employees[idx];
         uint nextPayDay = e.lastPayDay + payDuration;
         assert (nextPayDay <= now);
         e.lastPayDay = nextPayDay;
