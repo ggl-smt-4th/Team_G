@@ -13,6 +13,7 @@ contract Payroll {
 
     address owner;
     Employee[] employees;
+    uint totalSalary = 0;
 
     function Payroll() payable public {
         owner = msg.sender;
@@ -32,12 +33,15 @@ contract Payroll {
         var (_, found) = _findEmployee(employeeAddress);
         assert(!found);
         employees.push(Employee(employeeAddress, salary * 1 ether, now));
+        totalSalary += (salary * 1 ether);
     }
 
     function _payRemaining(Employee e) private {
         e.addr.transfer(e.salary * (now - e.lastPayDay) / payDuration);
     }
-    
+
+    event e (address id, uint s);
+    event index(uint i);
     function removeEmployee(address employeeId) public {
         require(msg.sender == owner);
         var (idx, found) = _findEmployee(employeeId);
@@ -45,6 +49,9 @@ contract Payroll {
         uint lastIdx = employees.length - 1;
         Employee storage toRemoveEmployee = employees[idx];
         employees[idx] = employees[lastIdx];
+        emit index(idx);
+        emit e(toRemoveEmployee.addr, toRemoveEmployee.salary);
+        totalSalary -= toRemoveEmployee.salary;
         _payRemaining(toRemoveEmployee);
         employees.length -= 1;
     }
@@ -53,6 +60,7 @@ contract Payroll {
         require(msg.sender == owner);
         var (idx, found) = _findEmployee(employeeAddress);
         assert(found);
+        totalSalary += (salary * 1 ether - employees[idx].salary);
         employees[idx].salary = salary * 1 ether;
     }
 
@@ -61,14 +69,10 @@ contract Payroll {
     }
 
     function calculateRunway() public view returns (uint) {
-        uint sum = 0;
-        for (uint i = 0; i < employees.length; i++) {
-            sum += employees[i].salary;
-        }
-        if (sum == 0) {
+        if (totalSalary == 0) {
             return UINT256_MAX;
         }
-        return address(this).balance / sum;
+        return address(this).balance / totalSalary;
     }
 
     function hasEnoughFund() public view returns (bool) {
