@@ -40,8 +40,6 @@ contract Payroll {
         e.addr.transfer(e.salary * (now - e.lastPayDay) / payDuration);
     }
 
-    event e (address id, uint s);
-    event index(uint i);
     function removeEmployee(address employeeId) public {
         require(msg.sender == owner);
         var (idx, found) = _findEmployee(employeeId);
@@ -49,8 +47,6 @@ contract Payroll {
         uint lastIdx = employees.length - 1;
         Employee storage toRemoveEmployee = employees[idx];
         employees[idx] = employees[lastIdx];
-        emit index(idx);
-        emit e(toRemoveEmployee.addr, toRemoveEmployee.salary);
         totalSalary -= toRemoveEmployee.salary;
         _payRemaining(toRemoveEmployee);
         employees.length -= 1;
