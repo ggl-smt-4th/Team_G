@@ -45,9 +45,8 @@ contract Payroll {
         uint lastIdx = employees.length - 1;
         Employee storage toRemoveEmployee = employees[idx];
         employees[idx] = employees[lastIdx];
-        employees.length -= 1;
-        // Payment should be after all setting of local variables.
         _payRemaining(toRemoveEmployee);
+        employees.length -= 1;
     }
 
     function updateEmployee(address employeeAddress, uint salary) public {
