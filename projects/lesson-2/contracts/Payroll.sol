@@ -35,7 +35,7 @@ contract Payroll {
         
         assert(employee.id == 0x0);
         
-        employees.push(Employee(employeeAddr, salary, now));
+        employees.push(Employee(employeeAddr, salary * 1 ether, now));
     }
     
     function removeEmployee(address employeeId) public {
