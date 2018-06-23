@@ -5,5 +5,5 @@
 
 2. 针对calculateRunway()这个的优化
 
-可以将totalSalary的计算在addEmployee 和 removeEmployee的过程中计算完成，放入storage中的
+可以将totalSalary的计算在addEmployee 和 removeEmployee的过程中计算完成，放入storage中,
 每次计算calculateRunway()时，可以直接用this.balance / totalSalary
