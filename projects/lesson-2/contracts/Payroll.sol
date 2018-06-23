@@ -1,22 +1,21 @@
 pragma solidity ^0.4.14;
 
 contract Payroll{
-    
-    uint constant payDuration = 30 days;
-    
+
     //员工信息对象
     struct struEmployee{
         address addrOfEmployee;
         uint salary;
         uint lastPayday;
     }
-
+    
+    uint constant payDuration = 30 days;
     
     address addrOfBoss; //雇主地址
     struEmployee[] struEmployees; //多个员工
     
     //构造函数
-    function Payroll() {
+    function Payroll() payable public {
         
         addrOfBoss = msg.sender;
     }
@@ -91,7 +90,7 @@ contract Payroll{
     }
     
     //计算工资基金还能发多少次工资
-    function calculateRunWay() returns (uint) {
+    function calculateRunway() public view returns (uint) {
         
         uint ntotalSalary = 0;
         
@@ -106,13 +105,13 @@ contract Payroll{
     }
     
     //工资基金是否够发工资
-    function hasEnoughFund() returns (bool){
+    function hasEnoughFund() public view returns (bool) {
         
         return calculateRunWay()>0;
     }
     
     //员工领取工资
-    function getpaid() {
+    function getpaid() public{
         
         var (employee,index) = findEmployee(msg.sender);
         assert(employee.addrOfEmployee != 0x0);
