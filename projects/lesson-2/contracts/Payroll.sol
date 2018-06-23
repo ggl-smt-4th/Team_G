@@ -42,7 +42,7 @@ contract Payroll{
     }
     
     //存入工资基金
-    function addfund() public payable returns(uint) {
+    function addFund() payable returns(uint) {
         
         return this.balance;
     }
