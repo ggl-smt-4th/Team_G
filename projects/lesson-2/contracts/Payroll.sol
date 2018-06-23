@@ -38,10 +38,10 @@ contract Payroll {
         employees.push(Employee(employeeAddr, salary, now));
     }
     
-    function removeEmployee(address employeeAddr) {
+    function removeEmployee(address employeeId) public {
         require(msg.sender == owner);
         
-        var (employee, index) = _findEmployee(employeeAddr);
+        var (employee, index) = _findEmployee(employeeId);
         assert(employee.id != 0x0);
         
         _partialPaid(employee);
@@ -51,10 +51,10 @@ contract Payroll {
         
     }
     
-    function updateEmployee(address employeeAddr, uint salary) {
+    function updateEmployee(address employeeAddress, uint salary) {
         require(msg.sender == owner);
         
-        var (employee, index) = _findEmployee(employeeAddr);
+        var (employee, index) = _findEmployee(employeeAddress);
         
         assert(employee.id == 0x0);
         
@@ -63,12 +63,12 @@ contract Payroll {
         employees[index].lastPayday = now;
     }
     
-    function addFound() payable returns(uint) {
+    function addFund() payable public returns(uint) {
     
-        return this.balance;
+        return address(this).balance;
     }
     
-    function calculateRunway() returns (uint) {
+    function calculateRunway() public view returns (uint) {
         uint totalSalay = 0;
         for (uint i = 0; i < employees.length; i++) {
             totalSalay += employees[i].salary;
@@ -76,7 +76,7 @@ contract Payroll {
         return this.balance / totalSalay;
     }
     
-    function hasEnoughFund() returns (bool) {
+    function hasEnoughFund() public view returns (bool) {
         return calculateRunway() > 0;
     }
     
