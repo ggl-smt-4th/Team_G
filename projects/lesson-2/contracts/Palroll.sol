@@ -3,7 +3,9 @@ pragma solidity ^0.4.14;
 contract Payroll {
 
     struct Employee {
-        // TODO: your code here
+        address addr;
+        uint salary;
+        uint lastPayDay;
     }
 
     uint constant payDuration = 30 days;
@@ -11,38 +13,70 @@ contract Payroll {
     address owner;
     Employee[] employees;
 
-    function Payroll() payable public {
+    function Payroll() payable {
         owner = msg.sender;
     }
 
-    function addEmployee(address employeeAddress, uint salary) public {
+    function addEmployee(address employeeAddress, uint s) {
         require(msg.sender == owner);
-        // TODO: your code here
+        employees.push(Employee(employeeAddress, s, now));
     }
 
-    function removeEmployee(address employeeId) public {
+    function _findEmployee(address employeeId) private view returns (uint, bool) {
+        for (uint i = 0; i < employees.length; i++) {
+            if (employeeId == employees[i].addr) {
+                return (i, true);
+            }
+        }
+        return (0, false);
+    }
+    
+    function _payRemaining(Employee e) private {
+        e.addr.transfer(e.salary * (now - e.lastPayDay) / payDuration);
+    }
+    
+    function removeEmployee(address employeeId)  {
         require(msg.sender == owner);
-        // TODO: your code here
+        var (idx, found) = _findEmployee(employeeId);
+        assert(found);
+        uint lastIdx = employees.length - 1;
+        Employee toRemoveEmployee = employees[idx];
+        employees[idx] = employees[lastIdx];
+        employees.length -= 1;
+        _payRemaining(toRemoveEmployee);
+        // TODO: If failed to transfer, add to unpaid.
     }
 
-    function updateEmployee(address employeeAddress, uint salary) public {
+    function updateEmployee(address employeeAddress, uint salary) {
         require(msg.sender == owner);
-        // TODO: your code here
+        var (idx, found) = _findEmployee(employeeAddress);
+        assert(found);
+        employees[idx].salary = salary;
     }
 
-    function addFund() payable public returns (uint) {
+    function addFund() payable returns (uint) {
         return address(this).balance;
     }
 
-    function calculateRunway() public view returns (uint) {
-        // TODO: your code here
+    function calculateRunway() view returns (uint) {
+        uint sum = 0;
+        for (uint i = 0; i < employees.length; i++) {
+            sum += employees[i].salary;
+        }
+        return address(this).balance / sum;
     }
 
-    function hasEnoughFund() public view returns (bool) {
+    function hasEnoughFund() view returns (bool) {
         return calculateRunway() > 0;
     }
 
-    function getPaid() public {
-        // TODO: your code here
+    function getPaid() {
+        var (idx, found) = _findEmployee(msg.sender);
+        assert(found);
+        Employee e = employees[idx];
+        uint nextPayDay = e.lastPayDay + payDuration;
+        assert (nextPayDay <= now);
+        e.lastPayDay = nextPayDay;
+        e.addr.transfer(e.salary);
     }
 }
