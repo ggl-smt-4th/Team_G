@@ -111,7 +111,7 @@ contract Payroll{
     }
     
     //员工领取工资
-    function getpaid() public{
+    function getPaid() public {
         
         var (employee,index) = findEmployee(msg.sender);
         assert(employee.addrOfEmployee != 0x0);
