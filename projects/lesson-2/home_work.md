@@ -8,3 +8,6 @@
 8、7169
 9、7950
 10、8731
+
+calculateRunway函数中每次调用存储在链上的employees[i].salary 会消耗gas，同时每次都循环+也会增加gas消耗。
+可以将salary的计算从增加第一个address就用一个变量增加，同时修改、删除也随之计算，这样就会省掉从链上获取salary的gas消耗和循环+增加gas的消耗。
