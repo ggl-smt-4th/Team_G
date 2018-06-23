@@ -65,6 +65,7 @@ contract Payroll {
          employees[index].LastPayday=now;
     }
 
+
     function addFund() payable public returns (uint) {
         return this.balance;
     }
