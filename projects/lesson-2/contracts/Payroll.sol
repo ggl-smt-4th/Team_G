@@ -107,7 +107,7 @@ contract Payroll{
     //工资基金是否够发工资
     function hasEnoughFund() public view returns (bool) {
         
-        return calculateRunWay()>0;
+        return calculateRunway()>0;
     }
     
     //员工领取工资
