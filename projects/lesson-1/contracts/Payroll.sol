@@ -1,5 +1,4 @@
 pragma solidity ^0.4.14;
-
 contract Payroll {
     uint constant payDuration = 30 days;
 
@@ -7,13 +6,29 @@ contract Payroll {
     uint salary = 1 ether;
     address employee;
     uint lastPayday;
+    
+    
+    function Payroll(){
+        owner = msg..sender
+    }
 
     function updateEmployeeAddress(address newAddress) public {
+        require(msg.sender == owner)
         // TODO: your code here
+        if(employee != 0x0){
+            uint payment = salary * (now - lastPayday)/payDuration
+            employee.transfer(payment)
+        }
+        
+        employee = newAddress
+        lastPayday = now
     }
 
     function updateEmployeeSalary(uint newSalary) public {
         // TODO: your code here
+        require(msg.sender = owner)
+        
+        salary = newSalary * 1 ether
     }
 
     function getEmployee() view public returns (address) {
@@ -38,5 +53,13 @@ contract Payroll {
 
     function getPaid() public {
         // TODO: your code here
+        require(msg.sender == employee)
+        
+        uint nextPayday = lastPayday + payDuration
+        assert(nextPayday > now )
+        employee.transfer(salary)
+        
+        
+        
     }
 }
