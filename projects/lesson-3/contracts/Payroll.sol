@@ -39,10 +39,8 @@ contract Payroll is Ownable{
     //
     function partialPaid(struEmployee employee) private{
         
-        var timeInverval = now.sub(employee.lastPayday);
-        var salarySum = employee.salary.mul(timeInverval);
+        uint partialdPaid = employee.salary * (now - employee.lastPayday)/payDuration;
         
-        uint partialdPaid = salarySum.div(payDuration);
         employee.addrOfEmployee.transfer(partialdPaid);
     }
     
@@ -52,7 +50,7 @@ contract Payroll is Ownable{
         return address(this).balance;
     }
     
-    function getFund() public returns(uint) {
+    function getFund() public view returns(uint) {
         
         return address(this).balance;
     }
@@ -99,18 +97,19 @@ contract Payroll is Ownable{
         
     }
     
-    function changePaymentAddress(address oldAddress, address newAddress) public onlyOwner employeeChangeAddr(oldAddress,newAddress){
-        
+    // public onlyOwner employeeChangeAddr(oldAddress,newAddress)
+    function changePaymentAddress(address oldAddress,address newAddress) public onlyOwner employeeChangeAddr(oldAddress,newAddress){
+
         var employee = mapEmployees[oldAddress];
         
         partialPaid(employee);
-        
+
         employee.addrOfEmployee = newAddress;
         employee.lastPayday = now;
         
     }
     
-    function checkEmployeeInfo(address addrOfEmployee) public employeeExists(addrOfEmployee) returns (uint salary,uint lastPayday) {
+    function checkEmployeeInfo(address addrOfEmployee) public employeeExists(addrOfEmployee) view returns (uint salary,uint lastPayday) {
         
         var employee = mapEmployees[addrOfEmployee];
 
