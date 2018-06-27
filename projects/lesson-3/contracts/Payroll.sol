@@ -31,6 +31,8 @@ contract Payroll is Ownable{
     modifier employeeChangeAddr(address oldAddress,address newAddress) {
         require(oldAddress != newAddress);
         
+        require(newAddress != 0x0);
+        
         var employee = mapEmployees[oldAddress];
         assert(employee.addrOfEmployee != 0x0);
         _;
@@ -104,9 +106,10 @@ contract Payroll is Ownable{
         
         partialPaid(employee);
 
-        employee.addrOfEmployee = newAddress;
-        employee.lastPayday = now;
+        mapEmployees[newAddress] = struEmployee(newAddress,employee.salary,now);
         
+        delete mapEmployees[oldAddress];
+
     }
     
     function checkEmployeeInfo(address addrOfEmployee) public employeeExists(addrOfEmployee) view returns (uint salary,uint lastPayday) {
@@ -139,5 +142,3 @@ contract Payroll is Ownable{
         employee.lastPayday = nextPayday;
         employee.addrOfEmployee.transfer(employee.salary);
     }
-
-}
