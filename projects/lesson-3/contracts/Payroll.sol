@@ -156,3 +156,4 @@ contract Payroll is Ownable{
         employee.lastPayday = nextPayday;
         employee.addrOfEmployee.transfer(employee.salary);
     }
+}
