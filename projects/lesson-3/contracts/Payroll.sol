@@ -25,6 +25,10 @@ contract Payroll is Ownable{
     //员工数量
     uint public nEmployeeNum = 0;
     
+    function Payroll() payable public {
+       
+    }
+    
     //判断员工是否存在
     modifier employeeExists(address addrOfEmployee) {
         var employee = mapEmployees[addrOfEmployee];
