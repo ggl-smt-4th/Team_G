@@ -70,11 +70,9 @@ contract('Payroll', function (accounts) {
       payroll = instance;
       return payroll.addEmployee(employee, salary, {from: owner});
     }).then(() => {
-      var struEmployeeTmp = payroll.mapEmployees[employee];
-      if(struEmployeeTmp.addrOfEmployee==0x0)
-          assert(false, "failed to addemployee");
+          assert(false, "failed to add employee");
     }).catch(error => {
-      assert.include(error.toString(), "Error: VM Exception", "0x0 address cannot be accepted!");
+      assert.include(error.toString(), "Error: VM Exception", "failed to add employee!");
     });
   });
 
