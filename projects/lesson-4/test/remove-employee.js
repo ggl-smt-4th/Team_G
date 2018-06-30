@@ -15,12 +15,14 @@ contract('Payroll', (accounts) => {
       return payroll.addEmployee(employee, salary, {from: owner});
     });
   });
-
+ 
+  //测试以雇主身份删除员工
   it("Test call removeEmployee() by owner", () => {
     // Remove employee
     return payroll.removeEmployee(employee, {from: owner});
   });
 
+  //测试以非雇主身份删除员工
   it("Test call removeEmployee() by guest", () => {
     return payroll.removeEmployee(employee, {from: guest}).then(() => {
       assert(false, "Should not be successful");
@@ -29,6 +31,7 @@ contract('Payroll', (accounts) => {
     });
   });
 
+  //测试删除不存在的员工
   it("Test call removeEmployee() employee does not exist", () => {
     return payroll.removeEmployee(guest1, {from: owner}).then(() => {
       assert(false, "Should not be successful");
@@ -37,6 +40,7 @@ contract('Payroll', (accounts) => {
     });
   });
 
+  //测试员工是否删除成功
   it("Test call removeEmployee() employee is still exist", () => {
     return payroll.removeEmployee(employee, {from: owner}).then(() => {
       var struEmployeeTmp = payroll.mapEmployees[employee];
