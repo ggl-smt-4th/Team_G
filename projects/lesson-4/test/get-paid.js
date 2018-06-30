@@ -9,6 +9,7 @@ contract('Payroll', function (accounts) {
   const payDuration = (30 + 1) * 86400;
   const fund = runway * salary;
 
+  //测试工资基金不够
   it("Test getPaid()", function () {
     var payroll;
     return Payroll.new.call(owner, {from: owner, value: web3.toWei(fund, 'ether')}).then(instance => {
@@ -30,7 +31,8 @@ contract('Payroll', function (accounts) {
       assert.equal(runwayRet.toNumber(), runway - 1, "The runway is not correct");
     });
   });
-   
+  
+   //测试未到期领取工资
   it("Test getPaid() before duration", function () {
     var payroll;
     return Payroll.new.call(owner, {from: owner, value: web3.toWei(fund, 'ether')}).then(instance => {
@@ -50,6 +52,7 @@ contract('Payroll', function (accounts) {
     });
   });
 
+  //测试非雇员领取工资
   it("Test getPaid() by a non-employee", function () {
     var payroll;
     return Payroll.new.call(owner, {from: owner, value: web3.toWei(fund, 'ether')}).then(instance => {
