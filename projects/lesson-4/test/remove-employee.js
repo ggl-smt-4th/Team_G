@@ -43,9 +43,7 @@ contract('Payroll', (accounts) => {
   //测试员工是否删除成功
   it("Test call removeEmployee() employee is still exist", () => {
     return payroll.removeEmployee(employee, {from: owner}).then(() => {
-      var struEmployeeTmp = payroll.mapEmployees[employee];
-      if(struEmployeeTmp.addrOfEmployee!=0x0)
-          assert(false, "failed to removeEmployee"); 
+          assert(false, "failed to remove Employee"); 
     }).catch(error => {
       assert.include(error.toString(), "Error: VM Exception", "This employee is still exist!");
     });
