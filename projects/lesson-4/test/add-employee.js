@@ -27,6 +27,17 @@ contract('Payroll', function (accounts) {
     });
   });
 
+  //测试为雇员赋值零薪水
+  it("Test call addEmployee() with zero salary", function () {
+    var payroll;
+    return Payroll.new().then(instance => {
+      payroll = instance;
+      return payroll.addEmployee(employee, 0, {from: owner});
+    }).then(assert.fail).catch(error => {
+      assert.include(error.toString(), "Error: VM Exception", "Zero salary can not be accepted!");
+    });
+  });
+
   //测试为以非雇主身份添加雇员
   it("Test addEmployee() by guest", function () {
     var payroll;
@@ -40,6 +51,30 @@ contract('Payroll', function (accounts) {
     });
   });
 
-  
+  //测试添加空地址的雇员
+  it("Test addEmployee() by 0x0 address", function () {
+    var payroll;
+    return Payroll.new().then(function (instance) {
+      payroll = instance;
+      return payroll.addEmployee(employee_null, salary, {from: owner});
+    }).then(() => {
+      assert(false, "Should not be successful");
+    }).catch(error => {
+      assert.include(error.toString(), "Error: VM Exception", "0x0 address cannot be accepted!");
+    });
+  });
+
+  //测试添加雇员失败的情况
+  it("Test addEmployee() failed to add employee", function () {
+    var payroll;
+    return Payroll.new().then(function (instance) {
+      payroll = instance;
+      return payroll.addEmployee(employee_1, salary, {from: owner});
+    }).then(() => {
+          assert(false, "failed to add employee_1");
+    }).catch(error => {
+      assert.include(error.toString(), "Error: VM Exception", "failed to add employee_1!");
+    });
+  });
 
 });
