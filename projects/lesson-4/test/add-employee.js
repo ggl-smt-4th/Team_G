@@ -3,6 +3,7 @@ var Payroll = artifacts.require("./Payroll.sol");
 contract('Payroll', function (accounts) {
   const owner = accounts[0];  //当前账号的第1个地址为雇主地址
   const employee = accounts[1]; //当前账号的第2个地址为雇员地址
+  const employee_1 = accounts[2]; //当前账号的第3个地址为第2个雇员地址
   const employee_null = 0x0; //空地址
   const guest = accounts[5]; //非雇员地址，用于测试以非雇主身份添加雇员
   const salary = 1; //雇员薪水
@@ -68,11 +69,11 @@ contract('Payroll', function (accounts) {
     var payroll;
     return Payroll.new().then(function (instance) {
       payroll = instance;
-      return payroll.addEmployee(employee, salary, {from: owner});
+      return payroll.addEmployee(employee_1, salary, {from: owner});
     }).then(() => {
-          assert(false, "failed to add employee");
+          assert(false, "failed to add employee_1");
     }).catch(error => {
-      assert.include(error.toString(), "Error: VM Exception", "failed to add employee!");
+      assert.include(error.toString(), "Error: VM Exception", "failed to add employee_1!");
     });
   });
 
