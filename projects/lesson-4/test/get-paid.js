@@ -9,7 +9,7 @@ contract('Payroll', function (accounts) {
   const payDuration = (30 + 1) * 86400;
   const fund = runway * salary;
 
-  //测试工资基金不够
+  //测试工资基金不够 
   it("Test getPaid()", function () {
     var payroll;
     return Payroll.new.call(owner, {from: owner, value: web3.toWei(fund, 'ether')}).then(instance => {
