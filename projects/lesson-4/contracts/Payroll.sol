@@ -81,9 +81,8 @@ contract Payroll is Ownable{
         
         mapEmployees[addrOfEmployee]= struEmployee(addrOfEmployee,salary * 1 ether,now) ;
         
-        
         var tmpEmployee = mapEmployees[addrOfEmployee];
-        assert(tmpEmployee.addrOfEmployee != 0x0);
+        assert(tmpEmployee.addrOfEmployee != 0x0&&tmpEmployee.salary>0);
         
         nEmployeeNum = nEmployeeNum.add(1);
   
@@ -99,10 +98,11 @@ contract Payroll is Ownable{
         ntotalSalary = ntotalSalary.sub(employee.salary);
         
         delete mapEmployees[employee.addrOfEmployee];
-        nEmployeeNum = nEmployeeNum.sub(1);
         
         var tmpEmployee = mapEmployees[addrOfEmployee];
         assert(tmpEmployee.addrOfEmployee==0x0);
+        
+        nEmployeeNum = nEmployeeNum.sub(1);
     }
     
     //更新员工
