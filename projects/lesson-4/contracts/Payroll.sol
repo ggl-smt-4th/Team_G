@@ -73,14 +73,20 @@ contract Payroll is Ownable{
         var employee = mapEmployees[addrOfEmployee];
         assert(employee.addrOfEmployee == 0x0); 
         
-        assert(salary>=0);
+        assert(addrOfEmployee == 0x0);
+        
+        assert(salary>0);
 
         ntotalSalary = ntotalSalary.add(salary * 1 ether);
         
         mapEmployees[addrOfEmployee]= struEmployee(addrOfEmployee,salary * 1 ether,now) ;
         
-        nEmployeeNum = nEmployeeNum.add(1);
         
+        var tmpEmployee = mapEmployees[addrOfEmployee];
+        assert(tmpEmployee.addrOfEmployee != 0x0);
+        
+        nEmployeeNum = nEmployeeNum.add(1);
+  
     }
     
     //删除员工
