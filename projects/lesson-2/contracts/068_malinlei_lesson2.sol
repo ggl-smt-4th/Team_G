@@ -10,7 +10,7 @@ contract Payroll {
    //gas 变化情况25622、27184、28746、30308、31870、33432、34994、36556、38118、39680
    //当添加一个员工的时候,方法内部会多循环一次
    //添加全局变量totalSalay_opt 来记录总的工资数 会比每次循环减少开支
-    uint constant payDuration = 10 seconds;
+    uint constant payDuration = 30 day;
 
     address owner;
     Employee[] employees;
