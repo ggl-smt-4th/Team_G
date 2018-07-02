@@ -9,6 +9,7 @@ contract('Payroll', function (accounts) {
   const payDuration = (30 + 1) * 86400;
   const fund = runway * salary;
 
+  //测试工资基金不够 
   it("Test getPaid()", function () {
     var payroll;
     return Payroll.new.call(owner, {from: owner, value: web3.toWei(fund, 'ether')}).then(instance => {
@@ -20,7 +21,7 @@ contract('Payroll', function (accounts) {
       if (!runwayRet.toNumber || typeof runwayRet.toNumber !== "function") {
         assert(false, "the function `calculateRunway()` should be defined as: `function calculateRunway() public view returns (uint)` | `calculateRunway()` 应定义为: `function calculateRunway() public view returns (uint)`");
       }
-      assert.equal(runwayRet.toNumber(), runway, "Try addFund() fail, runway is not right");
+      assert.equal(runwayRet.toNumber(), runway, "Runway is wrong");
       return web3.currentProvider.send({jsonrpc: "2.0", method: "evm_increaseTime", params: [payDuration], id: 0});
     }).then(() => {
       return payroll.getPaid({from: employee})
@@ -30,7 +31,8 @@ contract('Payroll', function (accounts) {
       assert.equal(runwayRet.toNumber(), runway - 1, "The runway is not correct");
     });
   });
-
+  
+   //测试未到期领取工资
   it("Test getPaid() before duration", function () {
     var payroll;
     return Payroll.new.call(owner, {from: owner, value: web3.toWei(fund, 'ether')}).then(instance => {
@@ -39,15 +41,18 @@ contract('Payroll', function (accounts) {
     }).then(() => {
       return payroll.calculateRunway();
     }).then(runwayRet => {
-      assert.equal(runwayRet.toNumber(), runway, "Try addFund() fail, runway is not right");
+      assert.equal(runwayRet.toNumber(), runway, "Runway is wrong");
       return payroll.getPaid({from: employee})
     }).then((getPaidRet) => {
+
+
       assert(false, "Should not be successful");
     }).catch(error => {
       assert.include(error.toString(), "Error: VM Exception", "Should not getPaid() before a pay duration");
     });
   });
 
+  //测试非雇员领取工资
   it("Test getPaid() by a non-employee", function () {
     var payroll;
     return Payroll.new.call(owner, {from: owner, value: web3.toWei(fund, 'ether')}).then(instance => {
@@ -56,7 +61,7 @@ contract('Payroll', function (accounts) {
     }).then(() => {
       return payroll.calculateRunway();
     }).then(runwayRet => {
-      assert.equal(runwayRet.toNumber(), runway, "Try addFund() fail, runway is not right");
+      assert.equal(runwayRet.toNumber(), runway, "Runway is wrong");
       return payroll.getPaid({from: guest})
     }).then((getPaidRet) => {
       assert(false, "Should not be successful");
@@ -64,4 +69,5 @@ contract('Payroll', function (accounts) {
       assert.include(error.toString(), "Error: VM Exception", "Should not call getPaid() by a non-employee");
     });
   });
+  
 });
