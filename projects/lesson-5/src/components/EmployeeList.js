@@ -30,7 +30,7 @@ class EmployeeList extends Component {
     this.state = {
       loading: true,
       employees: [],
-      showModal: false
+      showModal: false,
     };
 
     columns[1].render = (text, record) => (
@@ -49,7 +49,7 @@ class EmployeeList extends Component {
 
   componentDidMount() {
     const { payroll, account, web3 } = this.props;
-    payroll.checkInfo.call({
+    payroll.getEmployerInfo.call({
       from: account
     }).then((result) => {
       const employeeCount = result[2].toNumber();
@@ -65,15 +65,44 @@ class EmployeeList extends Component {
   }
 
   loadEmployees(employeeCount) {
+    const { payroll, account, web3 } = this.props;
+    this.setState({employees: []});
+    for (var i = 0; i < employeeCount; i++) {
+      payroll.getEmployeeInfo.call(i, {
+        from: account,
+        gas: 1000000,
+      }).then((result) => {
+        this.setState({
+          employees: this.state.employees.concat({address: result[0], salary: web3.fromWei(result[1].toNumber()), lastPaidDay: Date(parseInt(result[2])),}),
+        });
+      });
+    }
+    this.setState({loading: false});
   }
 
   addEmployee = () => {
+    const { payroll, account, web3 } = this.props;
+    payroll.addEmployee(this.state.address, parseInt(this.state.salary), {
+      from: account,
+      gas: 1000000,
+    }).then(result => alert('success'));
+    this.setState({showModal: false});
   }
 
   updateEmployee = (address, salary) => {
+    const { payroll, account, web3 } = this.props;
+    payroll.updateEmployee(address, parseInt(salary), {
+      from: account,
+      gas: 1000000,
+    }).then(result => alert('success'));
   }
 
   removeEmployee = (employeeId) => {
+    const { payroll, account, web3 } = this.props;
+    payroll.removeEmployee(employeeId, {
+      from: account,
+      gas: 1000000,
+    }).then(result => alert('success'));
   }
 
   renderModal() {
@@ -100,7 +129,6 @@ class EmployeeList extends Component {
         </Form>
       </Modal>
     );
-
   }
 
   render() {
