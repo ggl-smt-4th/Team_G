@@ -17,6 +17,7 @@ class Employer extends Component {
      const {payroll,account,web3}=this.props;
      payroll.employees.call(account,{
        from:account,
+       gas:1000000
      }).then((result)=>{
        this.setState({
        salary:web3.fromWei(result[1].toNumber()),
@@ -35,7 +36,8 @@ class Employer extends Component {
   getPaid = () => {
     const {payroll,account }=this.props;
     payroll.getPaid({
-      from:account
+      from:account,
+      gas:1000000
     }).then((result)=>{
       message.info('工资已结清!');
     });
