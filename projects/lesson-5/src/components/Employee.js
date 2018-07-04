@@ -20,7 +20,7 @@ class Employee extends Component {
         }).then((result) => {
             this.setState({
                 salary: web3.fromWei(result[1].toNumber()),
-                lastPayday: new Date(result[2].toNumber() * 1000).toString()
+                lastPaidDate: new Date(result[2].toNumber() * 1000).toString()
             });
         });
 
