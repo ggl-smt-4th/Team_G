@@ -6,7 +6,14 @@ import './Ownable.sol';
 contract Payroll is Ownable {
 
     using SafeMath for uint;
-
+    
+    // add event
+    event AddFund(address from, uint value);
+    event GetPaid(address employee, uint value);
+    event AddEmployee(address from, address employee, uint value);
+    event UpdateEmployee(address from, address employee, uint value);
+    event RemoveEmployee(address from, address employee);
+    
     /**
      * We are using mapping here, the key is already the address.
      */
@@ -60,6 +67,7 @@ contract Payroll is Ownable {
         employees[employeeId] = Employee(index, salary, now);
 
         totalSalary = totalSalary.add(salary);
+        AddEmployee(msg.sender, employeeId, salary);
     }
 
     function removeEmployee(address employeeId) public onlyOwner shouldExist(employeeId) {
@@ -80,6 +88,7 @@ contract Payroll is Ownable {
 
         // adjust length
         employeeAddressList.length -= 1;
+        RemoveEmployee(msg.sender, employeeId);
     }
 
     function changePaymentAddress(address oldAddress, address newAddress) public onlyOwner shouldExist(oldAddress) shouldNotExist(newAddress) {
@@ -98,9 +107,11 @@ contract Payroll is Ownable {
         employees[employeeId].salary = salary;
         employees[employeeId].lastPayday = now;
         totalSalary = totalSalary.add(salary).sub(oldSalary);
+        UpdateEmployee(msg.sender, employeeId, salary);
     }
 
     function addFund() payable public returns (uint) {
+        AddFund(msg.sender, msg.value);
         return address(this).balance;
     }
 
@@ -123,6 +134,7 @@ contract Payroll is Ownable {
 
         employees[employeeId].lastPayday = nextPayday;
         employeeId.transfer(employees[employeeId].salary);
+        GetPaid(msg.sender, employees[employeeId].salary);
     }
 
     function getEmployerInfo() view public returns (uint balance, uint runway, uint employeeCount) {
