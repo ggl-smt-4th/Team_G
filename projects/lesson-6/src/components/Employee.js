@@ -43,6 +43,17 @@ class Employer extends Component {
 
     componentDidMount() {
         this.checkEmployee();
+        const {payroll} = this.props;
++       const updateEmployeeInfo = (error, result) => {
++           if(!error) {
++              this.checkEmployee();
++           }
++       }+        
++       this.getPaidByEmployee = payroll.GetPaid(updateEmployeeInfo);
+    }
+    
+    componentWillUnmount() {
+        this.getPaidByEmployee.stopWatching();
     }
 
     renderContent() {
