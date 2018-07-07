@@ -15,11 +15,21 @@ class Common extends Component {
         this.getEmployerInfo();
       }
     }
-
+    this.newFund=payroll.NewFund(updateInfo);
+    this.GetPaid=payroll.GetPaid(updateInfo);
+    this.newEmployee=payroll.NewEmployee(updateInfo);
+    this.updateEmployee=payroll.UpdateEmployee(updateInfo);
+    this.remmoveEmployee=payroll.RemoveEmployee(updateInfo);
     this.getEmployerInfo();
+   
   }
 
   componentWillUnmount() {
+    this.newFund.stopWatching();
+    this.GetPaid.stopWatching();
+    this.newEmployee.stopWatching();
+    this.updateEmployee.stopWatching();
+    this.remmoveEmployee.stopWatching();
   }
 
   getEmployerInfo = () => {
